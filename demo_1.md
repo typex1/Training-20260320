@@ -1,5 +1,3 @@
-[← Back to Demos](index.html)
-
 # Demo 1: Pod-to-Pod Communication
 
 **Objective:** Understand how pods communicate on the same node (via veth pairs and a Linux bridge) and across nodes (via the Amazon VPC CNI plugin which assigns VPC IP addresses directly to pods).
@@ -69,8 +67,11 @@ Note the **IP** and **NODE** columns. If both pods land on the same node, commun
 ## Step 4: Test connectivity
 
 ```bash
-# Ping pod-b from pod-a (replace POD_B_IP)
-kubectl exec -n netdemo pod-a -- ping -c 3 <POD_B_IP>
+# Get pod-b IP automatically
+POD_B_IP=$(kubectl get pod pod-b -n netdemo -o jsonpath='{.status.podIP}')
+
+# Ping pod-b from pod-a
+kubectl exec -n netdemo pod-a -- ping -c 3 $POD_B_IP
 
 # Inspect network interfaces inside a pod
 kubectl exec -n netdemo pod-a -- ip addr
